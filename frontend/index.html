@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+</head>
+<body>
+    <nav class="navbar">
+        <img src="/image/logo.jpg" alt="Logo">
+        <div class="nav-links">
+            <a href="index.html">Home</a>
+            <a href="#">Feature</a>
+            <a href="about.html">About</a>
+        </div>
+    </nav>
+
+    <button class="chatbot-toggler">
+        <span class="material-symbols-outlined">mode_comment</span>
+        <span class="material-symbols-outlined">close</span>
+    </button>
+    <div class="chatbot">
+        <header>
+            <h2>Chatbot</h2>
+            <h4>AI Chat bot</h4>
+            <span class="close-btn material-symbols-outlined">close</span>
+            <span class="minimise-btn material-symbols-outlined">close_fullscreen</span>
+            <span class="maximise-btn material-symbols-outlined">open_in_full</span>
+        </header>
+        <ul class="chatbox">
+            <li class="chat incoming">
+                <span class="material-symbols-outlined">smart_toy</span>
+                <p>Hi there! how can I help you?</p>
+            </li>
+            <li class="chat outgoing">
+                <!-- <p>Lorem ipsum dolor sit amet.</p> -->
+            </li>
+        </ul>
+        <div class="chat-input">
+            <textarea placeholder="Enter a message...." required></textarea>
+            <span id="send-btn" class="material-symbols-outlined">send</span>
+            <label for="file-upload" class="material-symbols-outlined upload-icon">attach_file</label>
+            <form> <input id="file-upload" type="file" accept="application/pdf" style="display:none;"> </form>
+        </div>
+    </div>
+    <script src="assets/script.js"></script>
+</body>
+</html>
+
+
+
+    
