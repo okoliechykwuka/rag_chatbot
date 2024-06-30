@@ -6,7 +6,7 @@ import shutil
 import logging
 import os
 
-client = OpenAI(api_key="__API_KEY__")
+client = OpenAI(api_key="__")
 
 
 from pydantic import BaseModel

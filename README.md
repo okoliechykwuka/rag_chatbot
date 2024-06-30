@@ -8,3 +8,7 @@
 3. open the `index.html` file and chat with the app.
 
 
+### Chatbot UI
+
+![Chat UI](image/ui.png)
+
