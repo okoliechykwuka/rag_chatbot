@@ -2,16 +2,26 @@ from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from openai import OpenAI
 from pydantic import BaseModel
-import shutil
+from fastapi.responses import JSONResponse
 import logging
 import os
+import tempfile
+from embedchain import App
+from dotenv import load_dotenv, find_dotenv
 
-client = OpenAI(api_key="__")
+_ = load_dotenv(find_dotenv())
 
+# Configure logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-from pydantic import BaseModel
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+
 
 app = FastAPI()
+# Global variable to store the EmbedChain app
+embed_app = App()
 
 app.add_middleware(
     CORSMiddleware,
@@ -30,7 +40,7 @@ async def read_root():
 
 @app.post("/chat")
 async def chat(message: Message):
-    response_message = generate_response(message.message)
+    response_message = embed_app.chat(message.message)
     return {"response": response_message}
 
 def generate_response(message: str) -> str:
@@ -47,17 +57,24 @@ def generate_response(message: str) -> str:
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
     try:
-        file_location = f"files/{file.filename}"
-        with open(file_location, "wb") as f:
-            shutil.copyfileobj(file.file, f)
-        
-        # Process the uploaded PDF file using LangChain
-        # text = process_pdf(file_location)
-        # return {"message": "File processed successfully", "content": text[:200]}  # Return first 200 characters for brevity
-        return "yes"
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        contents = await file.read()
+        # Create a temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            temp_file.write(contents)
+            temp_file_path = temp_file.name
+            # print("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
+            # print(temp_file_path)
 
+        logger.info("Processing file with EmbedChain")
+        embed_app.add(temp_file_path, data_type="pdf_file")
+        logger.info("Document processed and indexed")
+        # Remove the temporary file
+        os.unlink(temp_file_path)
+
+        return JSONResponse(content={"message": f"File '{file.filename}' uploaded and processed successfully"}, status_code=200)
+    except Exception as e:
+        logger.error(f"Error processing file: {str(e)}", exc_info=True)
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
